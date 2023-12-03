@@ -1,17 +1,28 @@
-version: '3.8'
-
+version: '3'
 services:
-  client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
+  mongodb:
+    image: mongo
     ports:
-      - "3000:3000" 
-    depends_on:
-      - server  
-  server:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: comp3123_assignment2
+
+  backend:
     build:
       context: ./server
-      dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - "8081:8081"
+    depends_on:
+      - mongodb
+    environment:
+      DB_CONNECTION_STRING: "mongodb+srv://dbking:PN45TKjJLjYX3zlW@cluster0.qggx7lx.mongodb.net/comp3123_assigment1?retryWrites=true&w=majority"
+
+  frontend:
+    build:
+      context: ./client
+    ports:
+      -  "8080:80"
+    depends_on:
+      - server
